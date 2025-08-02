@@ -1,21 +1,26 @@
 import asyncio
+import time
 
-async def func(time, num):
-    print(f'No.{num} project start doing.')
-    await asyncio.sleep(time)
-    return {'task': f'{num} has finished.'}
+async def task1():
+    print("Task 1 started")
+    time.sleep(10)
+    print("Task 1 finished")
 
+async def task2():
+    print("Task 2 started")
+    await asyncio.sleep(1)
+    print("Task 2 finished")
 
 async def main():
-    task1 = asyncio.create_task(func(3, 1))
-    task2 = asyncio.create_task(func(2, 2))
-
-    result1 = await task1
-    result2 = await task2
-    task3 = asyncio.create_task(func(1, 3))
-    result3 = await task3
-
-    print(result1, result2, result3)
-
+    # Schedule tasks concurrently
+    t1 = asyncio.create_task(task1())
+    t2 = asyncio.create_task(task2())
+    await t1
+    await t2
 
 asyncio.run(main())
+# Output:
+# Task 1 started
+# Task 2 started
+# Task 2 finished
+# Task 1 finished

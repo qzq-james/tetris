@@ -2,6 +2,7 @@ import numpy as np
 import random
 import time
 
+from moving import block_lr
 
 class block_stack:
     def __init__(self):
@@ -32,6 +33,7 @@ def print_1step_fall(rb_row, rb_col, lt_row, lt_col, block, input_board):
 
 def time_period():
     time.sleep(2)
+    return False
 
 
 def get_new_cood(rb_row, rb_col):
@@ -46,9 +48,10 @@ def main():
         # init coodinate
         rb_row, rb_col = 2, random.randint(2, 8)
 
-        # For one block running
+        # For one block running <-- Now
         while True:
-            time_period()
+            block_lr()
+            
             # the right bottem coodinate
             lt_row, lt_col = get_new_cood(rb_row, rb_col)
             collision, save_board = print_1step_fall(rb_row, rb_col, lt_row, lt_col, block, game.board)
