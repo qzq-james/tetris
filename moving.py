@@ -4,10 +4,20 @@ from pynput import keyboard
 
 Pause_key = False
 
+def set_global_var(var):
+    global Pause_key
+    Pause_key = var
+
+
+def move_left(rb_col):
+    rb_col -= 1
+
+
 def on_press(key):
     try:
         if key == keyboard.Key.left:
             print('left')
+            # move_left(rb_col)
         if key == keyboard.Key.right:
             print('right')
     except Exception as e:
@@ -21,9 +31,7 @@ def on_release(key):
     
 
 async def sleep():
-    print('here is in sleep func before sleep')
     await asyncio.sleep(2)
-    print('after sleep')
     return True
     
     
@@ -48,7 +56,6 @@ async def block_lr():
 
     await task_moving
 
-    print('its over')
 
-
-asyncio.run(block_lr())
+if __name__ == '__main__':
+    asyncio.run(block_lr())

@@ -1,8 +1,8 @@
 import numpy as np
 import random
-import time
+import asyncio
 
-from moving import block_lr
+from moving import block_lr, set_global_var
 
 class block_stack:
     def __init__(self):
@@ -15,7 +15,7 @@ class block_stack:
         return block[random.randint(0, 1)]
     
 
-def print_1step_fall(rb_row, rb_col, lt_row, lt_col, block, input_board):
+def get_1step_fall(rb_row, rb_col, lt_row, lt_col, block, input_board):
     # input_board equals to previous board
     board = input_board.copy()
     # print(f'Here Coodinate rb: ({rb_col}, {rb_row})')
@@ -31,16 +31,15 @@ def print_1step_fall(rb_row, rb_col, lt_row, lt_col, block, input_board):
     return False, board
 
 
-def time_period():
-    time.sleep(2)
-    return False
-
-
-def get_new_cood(rb_row, rb_col):
+def get_coord(rb_row, rb_col):
     return rb_row - 2, rb_col - 2
 
 
-def main():
+async def stay():
+    await asyncio.sleep(2)
+
+
+async def main():
     game = block_stack()
     # For the game running
     while True:
@@ -50,22 +49,28 @@ def main():
 
         # For one block running <-- Now
         while True:
-            block_lr()
-            
-            # the right bottem coodinate
-            lt_row, lt_col = get_new_cood(rb_row, rb_col)
-            collision, save_board = print_1step_fall(rb_row, rb_col, lt_row, lt_col, block, game.board)
+            lt_row, lt_col = get_coord(rb_row, rb_col)
+            collision, save_board = get_1step_fall(rb_row, rb_col, lt_row, lt_col, block, game.board)
 
+            task_move = asyncio.create_task(block_lr())
+            task_stay = asyncio.create_task(stay())
+
+
+            # condition
             if collision:
-                print(f'Collision: Coodinate rb: ({rb_col}, {rb_row})')
+                print(f'Collision: Coordinate rb: ({rb_col}, {rb_row})')
                 game.board = last_vaild_board
                 print(last_vaild_board)
                 break
-            
-            print('\n-------------------------------------------------------------------------\n')
+
             # each time update the last_vaild
             last_vaild_board = save_board.copy()
             print(last_vaild_board)
+            print('\n-------------------------------------------------------------------------\n')
+
+            await task_stay
+            await task_move
+            set_global_var(False)
 
             rb_row += 1
 
@@ -79,5 +84,4 @@ def main():
         break
         
 
-
-main()
+asyncio.run(main())
